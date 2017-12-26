@@ -66,14 +66,9 @@ class IpAddress extends AbstractMiddleware
             return $remoteAddr;
         }
 
-        foreach ($headers as $headerField) {
-            if (!$request->hasHeader($headerField)) {
-                continue;
-            }
-            $ip = self::getIpAddressFromHeaderField($request, $headerField);
-            if ($ip) {
-                return $ip;
-            }
+        $ip = self::getIpAddressFromHeaders($request, $headers);
+        if (!empty($ip)) {
+            return $ip;
         }
 
         return $remoteAddr;
@@ -92,20 +87,40 @@ class IpAddress extends AbstractMiddleware
         return false !== filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6);
     }
 
-    protected static function getIpAddressFromHeaderField(ServerRequestInterface $request, string $headerName): ?string
+    /**
+     * @param ServerRequestInterface $request
+     * @param string[] $headers
+     * @return null|string
+     */
+    protected static function getIpAddressFromHeaders(ServerRequestInterface $request, array $headers): ?string
     {
-        $headerValue = trim(explode(',', $request->getHeaderLine($headerName))[0]);
+        foreach ($headers as $headerName) {
+            $headerValue = trim(explode(',', $request->getHeaderLine($headerName))[0]);
+            if (empty($headerValue)) {
+                continue;
+            }
 
-        if (ucfirst($headerName) == 'Forwarded') {
-            foreach (explode(';', $headerValue) as $headerPart) {
-                if (strtolower(substr($headerPart, 0, 4)) == 'for=') {
-                    $for = explode(']', $headerPart);
-                    $headerValue = trim(substr($for[0], 4), " \t\n\r\0\x0B\"[]");
-                    break;
-                }
+            if (strtolower($headerName) == 'forwarded') {
+                $headerValue = static::parseForwarded($headerValue);
+            }
+
+            if (static::isValidIpAddress($headerValue)) {
+                return $headerValue;
             }
         }
 
-        return static::isValidIpAddress($headerValue) ? $headerValue : null;
+        return null;
+    }
+
+    protected static function parseForwarded($headerValue): ?string
+    {
+        foreach (explode(';', $headerValue) as $headerPart) {
+            if (strtolower(substr($headerPart, 0, 4)) == 'for=') {
+                $for = explode(']', $headerPart);
+                return trim(substr($for[0], 4), " \t\n\r\0\x0B\"[]");
+            }
+        }
+
+        return null;
     }
 }
