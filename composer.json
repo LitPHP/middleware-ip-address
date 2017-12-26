@@ -1,0 +1,31 @@
+{
+    "name": "mcfog/middleware-ip-address",
+    "license": "ISC",
+    "authors": [
+        {
+            "name": "McFog Wang",
+            "email": "mcfogw@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Lit\\Middleware\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Lit\\Middleware\\Tests\\": "tests",
+            "Nimo\\Tests\\": "vendor/litphp/nimo/tests"
+        }
+    },
+    "prefer-stable": true,
+    "require": {
+        "php": ">=7.1.0",
+        "psr/http-message": "^1.0",
+        "litphp/nimo": "^0.4@dev"
+    },
+    "require-dev": {
+        "zendframework/zend-diactoros": "^1.6",
+        "phpunit/phpunit": "^6.5"
+    }
+}
