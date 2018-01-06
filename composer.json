@@ -9,14 +9,11 @@
     ],
     "autoload": {
         "psr-4": {
-            "Lit\\Middleware\\": "src"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Lit\\Middleware\\Tests\\": "tests",
-            "Nimo\\Tests\\": "vendor/litphp/nimo/tests"
-        }
+            "Lit\\Middleware\\": ""
+        },
+        "exclude-from-classmap": [
+            "/Tests/"
+        ]
     },
     "prefer-stable": true,
     "require": {
