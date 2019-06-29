@@ -181,8 +181,8 @@ class IpAddressTest extends NimoTestCase
     }
 
     /**
-     * @param $middleware
-     * @param $request
+     * @param IpAddressParser $middleware
+     * @param ServerRequestInterface $request
      */
     protected function runRequest(IpAddressParser $middleware, ServerRequestInterface $request): void
     {

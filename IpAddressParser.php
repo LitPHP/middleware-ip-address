@@ -19,7 +19,7 @@ class IpAddressParser extends AbstractMiddleware
      */
     protected $headers;
     /**
-     * @var string
+     * @var ?string
      */
     protected $ipAddress;
 
@@ -99,6 +99,10 @@ class IpAddressParser extends AbstractMiddleware
 
             if (strtolower($headerName) == 'forwarded') {
                 $headerValue = static::parseForwarded($headerValue);
+            }
+
+            if (is_null($headerValue)) {
+                continue;
             }
 
             if (static::isValidIpAddress($headerValue)) {
